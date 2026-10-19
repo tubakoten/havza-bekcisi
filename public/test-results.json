@@ -1,0 +1,914 @@
+[
+    {
+      "id": "8809ce83-a936-47d9-87ad-c41bd01aabe4",
+      "lat": 41.07757189752839,
+      "lon": 28.565112948417664,
+      "createdAt": "2026-10-19T15:53:56.569Z",
+      "tile": {
+        "z": 17,
+        "x": 75936,
+        "y": 49104,
+        "fx": 24.0234375,
+        "fy": 85.9375,
+        "beforeUrl": "https://wayback.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/WMTS/1.0.0/default028mm/MapServer/tile/10/17/49104/75936",
+        "afterUrl": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/17/49104/75936"
+      },
+      "distanceKm": 0.3286552082880846,
+      "analyses": [
+        {
+          "beforeRelease": 10,
+          "beforeDate": "2014-02-20",
+          "result": {
+            "degisim_var": true,
+            "kategori": "belirsiz",
+            "guven": 0.3,
+            "gorulen_isaretler": [
+              "ÖNCE görüntüsü çok düşük çözünürlüklü ve bulanık",
+              "SONRA görüntüsünde geniş çıplak toprak alanları",
+              "SONRA görüntüsünde bitki örtüsü kaybı",
+              "SONRA görüntüsünde doğrusal izler/yollar"
+            ],
+            "aciklama": "ÖNCE görüntüsünün düşük çözünürlüğü nedeniyle kesin bir değerlendirme yapılamamaktadır. SONRA görüntüsünde geniş alanlarda bitki örtüsü kaybı ve çıplak toprak yüzeyleri gözlemlenmektedir."
+          },
+          "model": "gemini-2.5-flash",
+          "createdAt": "2026-10-19T15:53:56.569Z"
+        }
+      ],
+      "truth": false,
+      "beforeRelease": 10,
+      "beforeDate": "2014-02-20",
+      "result": {
+        "degisim_var": true,
+        "kategori": "belirsiz",
+        "guven": 0.3,
+        "gorulen_isaretler": [
+          "ÖNCE görüntüsü çok düşük çözünürlüklü ve bulanık",
+          "SONRA görüntüsünde geniş çıplak toprak alanları",
+          "SONRA görüntüsünde bitki örtüsü kaybı",
+          "SONRA görüntüsünde doğrusal izler/yollar"
+        ],
+        "aciklama": "ÖNCE görüntüsünün düşük çözünürlüğü nedeniyle kesin bir değerlendirme yapılamamaktadır. SONRA görüntüsünde geniş alanlarda bitki örtüsü kaybı ve çıplak toprak yüzeyleri gözlemlenmektedir."
+      },
+      "model": "gemini-2.5-flash",
+      "viewRelease": 10,
+      "score": 0.1128961065777694
+    },
+    {
+      "id": "496c22e0-d074-4158-b1d2-b92c6c191e54",
+      "lat": 41.07797627719865,
+      "lon": 28.564903736114506,
+      "createdAt": "2026-10-19T15:54:22.162Z",
+      "tile": {
+        "z": 17,
+        "x": 75936,
+        "y": 49104,
+        "fx": 16.40625,
+        "fy": 66.4062499992724,
+        "beforeUrl": "https://wayback.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/WMTS/1.0.0/default028mm/MapServer/tile/10/17/49104/75936",
+        "afterUrl": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/17/49104/75936"
+      },
+      "distanceKm": 0.35548595283637535,
+      "analyses": [
+        {
+          "beforeRelease": 10,
+          "beforeDate": "2014-02-20",
+          "result": {
+            "degisim_var": true,
+            "kategori": "kacak_dokum",
+            "guven": 0.8,
+            "gorulen_isaretler": [
+              "Geniş ve düzensiz şekilli çıplak toprak alanları",
+              "Önceki görüntüye göre bitki örtüsünde belirgin ve düzensiz kayıp",
+              "Toprak yüzeyinde kazı veya döküm izlenimi veren değişiklikler"
+            ],
+            "aciklama": "ÖNCE görüntüsünde yoğun bitki örtüsü veya su alanı hakimken, SONRA görüntüsünde geniş ve düzensiz şekilli çıplak toprak alanları ortaya çıkmıştır. Bu durum, alanda büyük ölçekli bir yüzey değişikliğine ve bitki örtüsü kaybına işaret etmektedir."
+          },
+          "model": "gemini-2.5-flash",
+          "createdAt": "2026-10-19T15:54:22.162Z"
+        },
+        {
+          "beforeRelease": 48925,
+          "beforeDate": "2025-06-26",
+          "result": {
+            "degisim_var": true,
+            "kategori": "tarim",
+            "guven": 0.9,
+            "gorulen_isaretler": [
+              "mevsimsel bitki örtüsü değişimi",
+              "yeşillenme",
+              "tarla içi düzen"
+            ],
+            "aciklama": "Önceki görüntüde çıplak olan toprak alanların sonraki görüntüde bitki örtüsüyle kaplandığı ve yeşillendiği görülmektedir. Bu durum mevsimsel tarımsal faaliyetler veya bitkisel gelişim ile uyumludur."
+          },
+          "model": "gemini-3.5-flash-lite",
+          "createdAt": "2026-10-19T19:13:59.426Z"
+        }
+      ],
+      "truth": false,
+      "beforeRelease": 48925,
+      "beforeDate": "2025-06-26",
+      "result": {
+        "degisim_var": true,
+        "kategori": "tarim",
+        "guven": 0.9,
+        "gorulen_isaretler": [
+          "mevsimsel bitki örtüsü değişimi",
+          "yeşillenme",
+          "tarla içi düzen"
+        ],
+        "aciklama": "Önceki görüntüde çıplak olan toprak alanların sonraki görüntüde bitki örtüsüyle kaplandığı ve yeşillendiği görülmektedir. Bu durum mevsimsel tarımsal faaliyetler veya bitkisel gelişim ile uyumludur."
+      },
+      "model": "gemini-3.5-flash-lite",
+      "viewRelease": 48925,
+      "score": 0.06639685185351689
+    },
+    {
+      "id": "5503a13b-7f80-45a1-afec-ccd21bb7cf10",
+      "lat": 41.07853836080798,
+      "lon": 28.56624484062195,
+      "createdAt": "2026-10-19T15:54:52.074Z",
+      "tile": {
+        "z": 17,
+        "x": 75936,
+        "y": 49104,
+        "fx": 65.234375,
+        "fy": 39.2578125,
+        "beforeUrl": "https://wayback.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/WMTS/1.0.0/default028mm/MapServer/tile/10/17/49104/75936",
+        "afterUrl": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/17/49104/75936"
+      },
+      "distanceKm": 0.471701841271349,
+      "analyses": [
+        {
+          "beforeRelease": 10,
+          "beforeDate": "2014-02-20",
+          "result": {
+            "degisim_var": true,
+            "kategori": "kacak_dokum",
+            "guven": 0.7,
+            "gorulen_isaretler": [
+              "Geniş, düzensiz şekilli çıplak toprak alanları",
+              "Bitki örtüsünün büyük ölçüde kaybolması",
+              "Toprak üzerinde belirgin çizgisel izler",
+              "Önceki görüntüye göre yüzeyde köklü değişim"
+            ],
+            "aciklama": "Önceki yeşil alanda geniş, düzensiz şekilli çıplak toprak alanları ortaya çıkmıştır. Bu durum, bitki örtüsü kaybı ve toprak üzerinde belirgin çizgisel izlerle birlikte kaçak döküm veya hafriyat faaliyetlerini düşündürmektedir."
+          },
+          "model": "gemini-2.5-flash",
+          "createdAt": "2026-10-19T15:54:52.074Z"
+        },
+        {
+          "beforeRelease": 48925,
+          "beforeDate": "2025-06-26",
+          "result": {
+            "degisim_var": true,
+            "kategori": "tarim",
+            "guven": 0.9,
+            "gorulen_isaretler": [
+              "Bitki örtüsü gelişimi",
+              "Mevsimsel yeşerme",
+              "Toprak alanların yeşille kaplanması"
+            ],
+            "aciklama": "İki görüntü arasında yeni bir kaçak döküm veya yapılaşma bulunmamaktadır. Değişim tamamen mevsimsel bitki örtüsü gelişimi ve yeşillenmeden kaynaklanmaktadır."
+          },
+          "model": "gemini-3.5-flash-lite",
+          "createdAt": "2026-10-19T19:15:28.007Z"
+        }
+      ],
+      "truth": false,
+      "beforeRelease": 48925,
+      "beforeDate": "2025-06-26",
+      "result": {
+        "degisim_var": true,
+        "kategori": "tarim",
+        "guven": 0.9,
+        "gorulen_isaretler": [
+          "Bitki örtüsü gelişimi",
+          "Mevsimsel yeşerme",
+          "Toprak alanların yeşille kaplanması"
+        ],
+        "aciklama": "İki görüntü arasında yeni bir kaçak döküm veya yapılaşma bulunmamaktadır. Değişim tamamen mevsimsel bitki örtüsü gelişimi ve yeşillenmeden kaynaklanmaktadır."
+      },
+      "model": "gemini-3.5-flash-lite",
+      "viewRelease": 48925,
+      "score": 0.06115369124105487
+    },
+    {
+      "id": "24c65762-a1c6-4027-841d-1528de7e9920",
+      "lat": 41.10355227843806,
+      "lon": 28.53578567504883,
+      "createdAt": "2026-10-19T16:33:51.515Z",
+      "tile": {
+        "z": 17,
+        "x": 75925,
+        "y": 49092,
+        "fx": 56.25,
+        "fy": 30.859375,
+        "beforeUrl": "https://wayback.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/WMTS/1.0.0/default028mm/MapServer/tile/10/17/49092/75925",
+        "afterUrl": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/17/49092/75925"
+      },
+      "distanceKm": 0.5697296510492652,
+      "analyses": [
+        {
+          "beforeRelease": 10,
+          "beforeDate": "2014-02-20",
+          "result": {
+            "degisim_var": true,
+            "kategori": "belirsiz",
+            "guven": 0.3,
+            "gorulen_isaretler": [
+              "ÖNCE görüntüsü boş veya bozuk",
+              "ÖNCE görüntüsünde detay yok",
+              "SONRA görüntüsü doğal arazi ve su özellikleri gösteriyor"
+            ],
+            "aciklama": "ÖNCE görüntüsü veri içermediği için güvenilir bir karşılaştırma yapılamamaktadır. SONRA görüntüsü su ve bitki örtüsü gibi doğal özellikleri göstermektedir."
+          },
+          "model": "gemini-2.5-flash",
+          "createdAt": "2026-10-19T16:33:51.515Z"
+        }
+      ],
+      "truth": false,
+      "beforeRelease": 10,
+      "beforeDate": "2014-02-20",
+      "result": {
+        "degisim_var": true,
+        "kategori": "belirsiz",
+        "guven": 0.3,
+        "gorulen_isaretler": [
+          "ÖNCE görüntüsü boş veya bozuk",
+          "ÖNCE görüntüsünde detay yok",
+          "SONRA görüntüsü doğal arazi ve su özellikleri gösteriyor"
+        ],
+        "aciklama": "ÖNCE görüntüsü veri içermediği için güvenilir bir karşılaştırma yapılamamaktadır. SONRA görüntüsü su ve bitki örtüsü gibi doğal özellikleri göstermektedir."
+      },
+      "model": "gemini-2.5-flash",
+      "viewRelease": 10,
+      "score": 0.0955578560293707
+    },
+    {
+      "id": "dc13a7f4-57c5-484e-be48-7d0e3ac345aa",
+      "lat": 41.107165915111835,
+      "lon": 28.53930473327637,
+      "createdAt": "2026-10-19T16:34:15.567Z",
+      "tile": {
+        "z": 17,
+        "x": 75926,
+        "y": 49090,
+        "fx": 84.375,
+        "fy": 56.249999999272404,
+        "beforeUrl": "https://wayback.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/WMTS/1.0.0/default028mm/MapServer/tile/10/17/49090/75926",
+        "afterUrl": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/17/49090/75926"
+      },
+      "distanceKm": 0.9499516238652657,
+      "analyses": [
+        {
+          "beforeRelease": 10,
+          "beforeDate": "2014-02-20",
+          "result": {
+            "degisim_var": true,
+            "kategori": "belirsiz",
+            "guven": 0.7,
+            "gorulen_isaretler": [
+              "su seviyesinde belirgin düşüş",
+              "genişleyen kara alanları",
+              "yeni oluşan karada bitki örtüsü",
+              "nehir yatağının daralması"
+            ],
+            "aciklama": "Önceki görüntüye göre su seviyesinde belirgin bir düşüş yaşanmış, nehir yatağı daralmıştır. Ortaya çıkan geniş kara alanlarında yoğun bitki örtüsü gözlemlenmektedir."
+          },
+          "model": "gemini-2.5-flash",
+          "createdAt": "2026-10-19T16:34:15.567Z"
+        }
+      ],
+      "truth": false,
+      "beforeRelease": 10,
+      "beforeDate": "2014-02-20",
+      "result": {
+        "degisim_var": true,
+        "kategori": "belirsiz",
+        "guven": 0.7,
+        "gorulen_isaretler": [
+          "su seviyesinde belirgin düşüş",
+          "genişleyen kara alanları",
+          "yeni oluşan karada bitki örtüsü",
+          "nehir yatağının daralması"
+        ],
+        "aciklama": "Önceki görüntüye göre su seviyesinde belirgin bir düşüş yaşanmış, nehir yatağı daralmıştır. Ortaya çıkan geniş kara alanlarında yoğun bitki örtüsü gözlemlenmektedir."
+      },
+      "model": "gemini-2.5-flash",
+      "viewRelease": 10,
+      "score": 0.17949163236481586
+    },
+    {
+      "id": "e93991cd-0dd7-45bd-9733-5c5909153b1a",
+      "lat": 41.070365434645424,
+      "lon": 28.537620306015018,
+      "createdAt": "2026-10-19T16:34:32.474Z",
+      "tile": {
+        "z": 17,
+        "x": 75926,
+        "y": 49108,
+        "fx": 23.046875,
+        "fy": 33.984374999272404,
+        "beforeUrl": "https://wayback.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/WMTS/1.0.0/default028mm/MapServer/tile/10/17/49108/75926",
+        "afterUrl": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/17/49108/75926"
+      },
+      "distanceKm": 0.061345577889426774,
+      "analyses": [
+        {
+          "beforeRelease": 10,
+          "beforeDate": "2014-02-20",
+          "result": {
+            "degisim_var": true,
+            "kategori": "tarim",
+            "guven": 0.9,
+            "gorulen_isaretler": [
+              "tarım arazisinin ağaçlandırılarak ormanlık alana dönüşmesi",
+              "düzenli sıralar halinde dikilmiş ağaçlar",
+              "su seviyesinin çekilmesiyle ortaya çıkan kıyı şeridi"
+            ],
+            "aciklama": "Önceki tarım arazisi, düzenli sıralar halinde dikilmiş ağaçlarla büyük bir ormanlık alana dönüşmüştür. Su seviyesinde de bir miktar çekilme gözlemlenmektedir."
+          },
+          "model": "gemini-2.5-flash",
+          "createdAt": "2026-10-19T16:34:32.474Z"
+        }
+      ],
+      "truth": false,
+      "beforeRelease": 10,
+      "beforeDate": "2014-02-20",
+      "result": {
+        "degisim_var": true,
+        "kategori": "tarim",
+        "guven": 0.9,
+        "gorulen_isaretler": [
+          "tarım arazisinin ağaçlandırılarak ormanlık alana dönüşmesi",
+          "düzenli sıralar halinde dikilmiş ağaçlar",
+          "su seviyesinin çekilmesiyle ortaya çıkan kıyı şeridi"
+        ],
+        "aciklama": "Önceki tarım arazisi, düzenli sıralar halinde dikilmiş ağaçlarla büyük bir ormanlık alana dönüşmüştür. Su seviyesinde de bir miktar çekilme gözlemlenmektedir."
+      },
+      "model": "gemini-2.5-flash",
+      "viewRelease": 10,
+      "score": 0.08479801666387722
+    },
+    {
+      "id": "88eef5e0-dd14-497e-a58f-2c15c18b7851",
+      "lat": 41.06343322053053,
+      "lon": 28.54179382324219,
+      "createdAt": "2026-10-19T16:34:47.415Z",
+      "tile": {
+        "z": 17,
+        "x": 75927,
+        "y": 49111,
+        "fx": 75,
+        "fy": 68.75,
+        "beforeUrl": "https://wayback.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/WMTS/1.0.0/default028mm/MapServer/tile/10/17/49111/75927",
+        "afterUrl": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/17/49111/75927"
+      },
+      "distanceKm": 0.030616752169824193,
+      "analyses": [
+        {
+          "beforeRelease": 10,
+          "beforeDate": "2014-02-20",
+          "result": {
+            "degisim_var": true,
+            "kategori": "kacak_dokum",
+            "guven": 0.9,
+            "gorulen_isaretler": [
+              "Yeni toprak yol oluşumu",
+              "Yol boyunca düzensiz toprak/moloz yığınları",
+              "Bitki örtüsünün yerini alan çıplak alanlar",
+              "Su kenarında yapılanma"
+            ],
+            "aciklama": "ÖNCE görüntüsünde olmayan yeni bir toprak yol ve yol boyunca düzensiz toprak/moloz yığınları SONRA görüntüsünde belirmiştir. Bu durum, kaçak döküm faaliyetine işaret etmektedir."
+          },
+          "model": "gemini-2.5-flash",
+          "createdAt": "2026-10-19T16:34:47.415Z"
+        },
+        {
+          "beforeRelease": 22252,
+          "beforeDate": "2026-01-29",
+          "result": {
+            "degisim_var": false,
+            "kategori": "degisim_yok",
+            "guven": 1,
+            "gorulen_isaretler": [],
+            "aciklama": "İki görüntü arasında herhangi bir değişiklik tespit edilmemiştir. Alanın yüzey özellikleri aynı kalmıştır."
+          },
+          "model": "gemini-2.5-flash",
+          "createdAt": "2026-10-19T16:35:09.940Z"
+        },
+        {
+          "beforeRelease": 36557,
+          "beforeDate": "2025-01-30",
+          "result": {
+            "degisim_var": true,
+            "kategori": "kacak_dokum",
+            "guven": 0.9,
+            "gorulen_isaretler": [
+              "Yeni, düzensiz şekilli toprak yığınları",
+              "Su kenarında bitki örtüsü kaybı olan yeni çıplak alanlar",
+              "Yol kenarında oluşan moloz/toprak birikintileri"
+            ],
+            "aciklama": "ÖNCE görüntüsündeki boş tarla SONRA görüntüsünde yeşillenmiş olsa da, su kenarındaki toprak yol boyunca yeni ve düzensiz toprak/moloz yığınları oluşmuştur. Bu yığınlar kaçak döküm işaretleri taşımaktadır."
+          },
+          "model": "gemini-2.5-flash",
+          "createdAt": "2026-10-19T16:35:33.549Z"
+        },
+        {
+          "beforeRelease": 48925,
+          "beforeDate": "2025-06-26",
+          "result": {
+            "degisim_var": true,
+            "kategori": "tarim",
+            "guven": 0.9,
+            "gorulen_isaretler": [
+              "tarlanın sürülmesi",
+              "bitki örtüsü değişimi"
+            ],
+            "aciklama": "Önceki görüntüde sürülü olan tarla alanının daha sonraki tarihte yeşillendiği ve tarımsal faaliyetlerin devam ettiği görülmektedir. Bu durum mevsimsel tarım döngüsünün bir parçasıdır."
+          },
+          "model": "gemini-3.5-flash-lite",
+          "createdAt": "2026-10-19T19:12:59.918Z"
+        }
+      ],
+      "truth": false,
+      "beforeRelease": 48925,
+      "beforeDate": "2025-06-26",
+      "result": {
+        "degisim_var": true,
+        "kategori": "tarim",
+        "guven": 0.9,
+        "gorulen_isaretler": [
+          "tarlanın sürülmesi",
+          "bitki örtüsü değişimi"
+        ],
+        "aciklama": "Önceki görüntüde sürülü olan tarla alanının daha sonraki tarihte yeşillendiği ve tarımsal faaliyetlerin devam ettiği görülmektedir. Bu durum mevsimsel tarım döngüsünün bir parçasıdır."
+      },
+      "model": "gemini-3.5-flash-lite",
+      "viewRelease": 48925,
+      "score": 0.08732635076085964
+    },
+    {
+      "id": "770ed59b-d746-4ae0-8a7b-19e3d72403eb",
+      "lat": 41.04878985326963,
+      "lon": 28.55157852172852,
+      "createdAt": "2026-10-19T16:36:08.311Z",
+      "tile": {
+        "z": 17,
+        "x": 75931,
+        "y": 49118,
+        "fx": 31.25,
+        "fy": 75.7812499992724,
+        "beforeUrl": "https://wayback.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/WMTS/1.0.0/default028mm/MapServer/tile/10/17/49118/75931",
+        "afterUrl": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/17/49118/75931"
+      },
+      "distanceKm": 0.09740243974758153,
+      "analyses": [
+        {
+          "beforeRelease": 10,
+          "beforeDate": "2014-02-20",
+          "result": {
+            "degisim_var": true,
+            "kategori": "tarim",
+            "guven": 0.9,
+            "gorulen_isaretler": [
+              "bitki örtüsünde belirgin artış",
+              "daha yeşil ve yoğun bitki örtüsü",
+              "çıplak toprak alanların azalması"
+            ],
+            "aciklama": "ÖNCE görüntüsüne göre SONRA görüntüsünde karasal alanda belirgin bir bitki örtüsü artışı gözlemlenmiştir. Bu durum mevsimsel bitki değişimine işaret etmektedir."
+          },
+          "model": "gemini-2.5-flash",
+          "createdAt": "2026-10-19T16:36:08.311Z"
+        }
+      ],
+      "truth": false,
+      "beforeRelease": 10,
+      "beforeDate": "2014-02-20",
+      "result": {
+        "degisim_var": true,
+        "kategori": "tarim",
+        "guven": 0.9,
+        "gorulen_isaretler": [
+          "bitki örtüsünde belirgin artış",
+          "daha yeşil ve yoğun bitki örtüsü",
+          "çıplak toprak alanların azalması"
+        ],
+        "aciklama": "ÖNCE görüntüsüne göre SONRA görüntüsünde karasal alanda belirgin bir bitki örtüsü artışı gözlemlenmiştir. Bu durum mevsimsel bitki değişimine işaret etmektedir."
+      },
+      "model": "gemini-2.5-flash",
+      "viewRelease": 10,
+      "score": 0.08201184610150979
+    },
+    {
+      "id": "2b7c8889-e41d-45ca-95bd-c2ccb71bc41b",
+      "lat": 41.03506581730962,
+      "lon": 28.58524560928345,
+      "createdAt": "2026-10-19T16:36:40.803Z",
+      "tile": {
+        "z": 17,
+        "x": 75943,
+        "y": 49125,
+        "fx": 57.03125,
+        "fy": 38.28125,
+        "beforeUrl": "https://wayback.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/WMTS/1.0.0/default028mm/MapServer/tile/10/17/49125/75943",
+        "afterUrl": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/17/49125/75943"
+      },
+      "distanceKm": 0.06890338854069843,
+      "analyses": [
+        {
+          "beforeRelease": 10,
+          "beforeDate": "2014-02-20",
+          "result": {
+            "degisim_var": true,
+            "kategori": "belirsiz",
+            "guven": 0.4,
+            "gorulen_isaretler": [
+              "Bitki örtüsünde belirgin artış",
+              "Su yüzeyinde renk değişimi",
+              "Görüntü kalitesinde farklılık"
+            ],
+            "aciklama": "İki görüntü arasında bitki örtüsünde ve su yüzeyinde belirgin farklılıklar bulunmaktadır. Görüntü kalitesindeki ve muhtemel mevsimsel farklılıklar nedeniyle kesin bir değerlendirme yapmak zordur."
+          },
+          "model": "gemini-2.5-flash",
+          "createdAt": "2026-10-19T16:36:40.803Z"
+        }
+      ],
+      "truth": false,
+      "beforeRelease": 10,
+      "beforeDate": "2014-02-20",
+      "result": {
+        "degisim_var": true,
+        "kategori": "belirsiz",
+        "guven": 0.4,
+        "gorulen_isaretler": [
+          "Bitki örtüsünde belirgin artış",
+          "Su yüzeyinde renk değişimi",
+          "Görüntü kalitesinde farklılık"
+        ],
+        "aciklama": "İki görüntü arasında bitki örtüsünde ve su yüzeyinde belirgin farklılıklar bulunmaktadır. Görüntü kalitesindeki ve muhtemel mevsimsel farklılıklar nedeniyle kesin bir değerlendirme yapmak zordur."
+      },
+      "model": "gemini-2.5-flash",
+      "viewRelease": 10,
+      "score": 0.18710764896446486
+    },
+    {
+      "id": "02e674cf-fcd5-4a02-8d3c-ddf46d56fc36",
+      "lat": 41.05628790724558,
+      "lon": 28.577864170074466,
+      "createdAt": "2026-10-19T18:56:23.359Z",
+      "tile": {
+        "z": 17,
+        "x": 75940,
+        "y": 49115,
+        "fx": 88.28125,
+        "fy": 13.76953125,
+        "beforeUrl": "https://wayback.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/WMTS/1.0.0/default028mm/MapServer/tile/10/17/49115/75940",
+        "afterUrl": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/17/49115/75940"
+      },
+      "distanceKm": 0.10306315607732275,
+      "analyses": [
+        {
+          "beforeRelease": 10,
+          "beforeDate": "2014-02-20",
+          "result": {
+            "degisim_var": true,
+            "kategori": "kacak_dokum",
+            "guven": 0.8,
+            "gorulen_isaretler": [
+              "Yeni çıplak toprak alanları",
+              "Düzensiz şekilli alanlar",
+              "Bitki örtüsünün kaybı",
+              "Toprak yol veya izler"
+            ],
+            "aciklama": "Önceki görüntüye göre, alanda çok sayıda yeni ve düzensiz şekilli çıplak toprak alanları oluşmuştur. Bu durum, bitki örtüsünün kaldırıldığını ve kaçak döküm veya izinsiz hafriyat yapıldığını düşündürmektedir."
+          },
+          "model": "gemini-2.5-flash",
+          "createdAt": "2026-10-19T18:56:23.359Z"
+        },
+        {
+          "beforeRelease": 48925,
+          "beforeDate": "2025-06-26",
+          "result": {
+            "degisim_var": false,
+            "kategori": "degisim_yok",
+            "guven": 0.95,
+            "gorulen_isaretler": [
+              "su seviyesi değişimi",
+              "mevsimsel bitki rengi değişimi"
+            ],
+            "aciklama": "İki görüntü arasında kalıcı bir arazi değişimi veya kaçak döküm tespit edilmemiştir, farklar su seviyesi ve bitki örtüsünün ton değişimlerinden kaynaklanmaktadır."
+          },
+          "model": "gemini-3.5-flash-lite",
+          "createdAt": "2026-10-19T19:13:29.179Z"
+        }
+      ],
+      "truth": false,
+      "beforeRelease": 48925,
+      "beforeDate": "2025-06-26",
+      "result": {
+        "degisim_var": false,
+        "kategori": "degisim_yok",
+        "guven": 0.95,
+        "gorulen_isaretler": [
+          "su seviyesi değişimi",
+          "mevsimsel bitki rengi değişimi"
+        ],
+        "aciklama": "İki görüntü arasında kalıcı bir arazi değişimi veya kaçak döküm tespit edilmemiştir, farklar su seviyesi ve bitki örtüsünün ton değişimlerinden kaynaklanmaktadır."
+      },
+      "model": "gemini-3.5-flash-lite",
+      "viewRelease": 48925,
+      "score": 0.08612380848421763
+    },
+    {
+      "id": "667cdfde-a905-4821-91d7-876daaf1bccb",
+      "lat": 41.10742460183232,
+      "lon": 28.55706095695496,
+      "createdAt": "2026-10-19T18:57:02.160Z",
+      "tile": {
+        "z": 17,
+        "x": 75933,
+        "y": 49090,
+        "fx": 30.859375,
+        "fy": 43.75,
+        "beforeUrl": "https://wayback.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/WMTS/1.0.0/default028mm/MapServer/tile/10/17/49090/75933",
+        "afterUrl": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/17/49090/75933"
+      },
+      "distanceKm": 0.3819108164978109,
+      "analyses": [
+        {
+          "beforeRelease": 10,
+          "beforeDate": "2014-02-20",
+          "result": {
+            "degisim_var": true,
+            "kategori": "kacak_dokum",
+            "guven": 0.7,
+            "gorulen_isaretler": [
+              "Geniş bir su kütlesinin ortaya çıkması",
+              "Bitki örtüsünün önemli ölçüde değişimi ve kaybı",
+              "Arazinin genel yapısında belirgin bozulma",
+              "Su kütlesinin düzensiz şekli"
+            ],
+            "aciklama": "Önceki yeşil alanın yerini büyük bir su kütlesi ve kırmızımsı kahverengi bitki örtüsü almıştır. Bu durum, yetkisiz hafriyat veya arazi kullanım değişikliğine işaret etmektedir."
+          },
+          "model": "gemini-2.5-flash",
+          "createdAt": "2026-10-19T18:57:02.160Z"
+        },
+        {
+          "beforeRelease": 48925,
+          "beforeDate": "2025-06-26",
+          "result": {
+            "degisim_var": true,
+            "kategori": "degisim_yok",
+            "guven": 0.9,
+            "gorulen_isaretler": [
+              "su seviyesi degisimi",
+              "mevsimsel bitki ortusu degisimi"
+            ],
+            "aciklama": "Iki goruntu arasinda su seviyesinin ve sulak alan bitki ortusunun mevsimsel dongulerden kaynaklanan degisimleri gorulmektedir. Herhangi bir kacak dokum veya yasal insaat faaliyeti tespit edilmemistir."
+          },
+          "model": "gemini-3.5-flash-lite",
+          "createdAt": "2026-10-19T19:15:02.246Z"
+        }
+      ],
+      "truth": false,
+      "beforeRelease": 48925,
+      "beforeDate": "2025-06-26",
+      "result": {
+        "degisim_var": true,
+        "kategori": "degisim_yok",
+        "guven": 0.9,
+        "gorulen_isaretler": [
+          "su seviyesi degisimi",
+          "mevsimsel bitki ortusu degisimi"
+        ],
+        "aciklama": "Iki goruntu arasinda su seviyesinin ve sulak alan bitki ortusunun mevsimsel dongulerden kaynaklanan degisimleri gorulmektedir. Herhangi bir kacak dokum veya yasal insaat faaliyeti tespit edilmemistir."
+      },
+      "model": "gemini-3.5-flash-lite",
+      "viewRelease": 48925,
+      "score": 0.06512721293266076
+    },
+    {
+      "id": "04caeb79-f810-4c8e-a55a-4982cd0f4c77",
+      "lat": 41.05911336166662,
+      "lon": 28.539690971374515,
+      "createdAt": "2026-10-19T19:02:56.115Z",
+      "tile": {
+        "z": 17,
+        "x": 75926,
+        "y": 49113,
+        "fx": 98.4375,
+        "fy": 77.34375,
+        "beforeUrl": "https://wayback.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/WMTS/1.0.0/default028mm/MapServer/tile/10/17/49113/75926",
+        "afterUrl": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/17/49113/75926"
+      },
+      "distanceKm": 0.02192794833199304,
+      "analyses": [
+        {
+          "beforeRelease": 10,
+          "beforeDate": "2014-02-20",
+          "result": {
+            "degisim_var": true,
+            "kategori": "yasal_insaat",
+            "guven": 0.9,
+            "gorulen_isaretler": [
+              "Yeni, düzenli geometrik kazılar/temeller",
+              "Geniş alanlarda bitki örtüsü artışı",
+              "Eski çıplak alanların yeşillenmesi"
+            ],
+            "aciklama": "ÖNCE görüntüsündeki çıplak alanların yerini SONRA görüntüsünde yeşil bitki örtüsü almıştır. Ayrıca, SONRA görüntüsünde düzenli geometrik şekilli yeni yapılar veya kazılar belirginleşmiştir."
+          },
+          "model": "gemini-2.5-flash",
+          "createdAt": "2026-10-19T19:02:56.115Z"
+        }
+      ],
+      "truth": false,
+      "beforeRelease": 10,
+      "beforeDate": "2014-02-20",
+      "result": {
+        "degisim_var": true,
+        "kategori": "yasal_insaat",
+        "guven": 0.9,
+        "gorulen_isaretler": [
+          "Yeni, düzenli geometrik kazılar/temeller",
+          "Geniş alanlarda bitki örtüsü artışı",
+          "Eski çıplak alanların yeşillenmesi"
+        ],
+        "aciklama": "ÖNCE görüntüsündeki çıplak alanların yerini SONRA görüntüsünde yeşil bitki örtüsü almıştır. Ayrıca, SONRA görüntüsünde düzenli geometrik şekilli yeni yapılar veya kazılar belirginleşmiştir."
+      },
+      "model": "gemini-2.5-flash",
+      "viewRelease": 10,
+      "score": 0.08806883121936282
+    },
+    {
+      "id": "373cac23-7811-4749-b273-c4190353ada5",
+      "lat": 41.09503883157275,
+      "lon": 28.523683547973636,
+      "createdAt": "2026-10-19T19:07:53.191Z",
+      "tile": {
+        "z": 17,
+        "x": 75921,
+        "y": 49096,
+        "fx": 15.625,
+        "fy": 42.1875,
+        "beforeUrl": "https://wayback.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/WMTS/1.0.0/default028mm/MapServer/tile/10/17/49096/75921",
+        "afterUrl": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/17/49096/75921"
+      },
+      "distanceKm": 0.30047335544203013,
+      "analyses": [
+        {
+          "beforeRelease": 10,
+          "beforeDate": "2014-02-20",
+          "result": {
+            "degisim_var": false,
+            "kategori": "belirsiz",
+            "guven": 0.2,
+            "gorulen_isaretler": [
+              "bulut",
+              "bulanik_goruntu"
+            ],
+            "aciklama": "Görüntü kalitesi düşük ve bulut örtüsü nedeniyle analiz yapılamamaktadır. Bu nedenle değişiklik tespit edilememiştir."
+          },
+          "model": "gemini-3.5-flash-lite",
+          "createdAt": "2026-10-19T19:07:53.191Z"
+        }
+      ],
+      "truth": false,
+      "beforeRelease": 10,
+      "beforeDate": "2014-02-20",
+      "result": {
+        "degisim_var": false,
+        "kategori": "belirsiz",
+        "guven": 0.2,
+        "gorulen_isaretler": [
+          "bulut",
+          "bulanik_goruntu"
+        ],
+        "aciklama": "Görüntü kalitesi düşük ve bulut örtüsü nedeniyle analiz yapılamamaktadır. Bu nedenle değişiklik tespit edilememiştir."
+      },
+      "model": "gemini-3.5-flash-lite",
+      "viewRelease": 10,
+      "score": 0.07689507792030853
+    },
+    {
+      "id": "9a0a3d36-66b2-4c8a-9782-2778f7c39fe7",
+      "lat": 41.104154565026555,
+      "lon": 28.53100061416626,
+      "createdAt": "2026-10-19T19:08:03.965Z",
+      "tile": {
+        "z": 17,
+        "x": 75923,
+        "y": 49092,
+        "fx": 82.03125,
+        "fy": 1.7578124985448085,
+        "beforeUrl": "https://wayback.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/WMTS/1.0.0/default028mm/MapServer/tile/10/17/49092/75923",
+        "afterUrl": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/17/49092/75923"
+      },
+      "distanceKm": 0.6758509016710396,
+      "analyses": [
+        {
+          "beforeRelease": 10,
+          "beforeDate": "2014-02-20",
+          "result": {
+            "degisim_var": true,
+            "kategori": "kacak_dokum",
+            "guven": 0.85,
+            "gorulen_isaretler": [
+              "toprak ve hafriyat yiginlari",
+              "yol kenarinda duzensiz dokum alanlari",
+              "su seviyesi degisimi vekiyi kaybi"
+            ],
+            "aciklama": "Görüntülenen alanda su kenarında ve yol boyunca yeni hafriyat ve moloz dökümleri oluştuğu tespit edilmiştir. Bu durum düzensiz toprak yığınları ve bitki örtüsünün bozulması ile kendini göstermektedir."
+          },
+          "model": "gemini-3.5-flash-lite",
+          "createdAt": "2026-10-19T19:08:03.965Z"
+        },
+        {
+          "beforeRelease": 48925,
+          "beforeDate": "2025-06-26",
+          "result": {
+            "degisim_var": true,
+            "kategori": "belirsiz",
+            "guven": 0.4,
+            "gorulen_isaretler": [
+              "su seviyesi degisimi",
+              "kiyi seridinde bitki ortusu degisimi"
+            ],
+            "aciklama": "Goruntulerde su seviyesinin azaldigi ve buna bagli olarak kiyidaki sulak alan bitkilerinde degisiklik oldugu gorulmektedir, kacak dokum kaniti bulunmamaktadir."
+          },
+          "model": "gemini-3.5-flash-lite",
+          "createdAt": "2026-10-19T19:14:23.694Z"
+        }
+      ],
+      "truth": false,
+      "beforeRelease": 48925,
+      "beforeDate": "2025-06-26",
+      "result": {
+        "degisim_var": true,
+        "kategori": "belirsiz",
+        "guven": 0.4,
+        "gorulen_isaretler": [
+          "su seviyesi degisimi",
+          "kiyi seridinde bitki ortusu degisimi"
+        ],
+        "aciklama": "Goruntulerde su seviyesinin azaldigi ve buna bagli olarak kiyidaki sulak alan bitkilerinde degisiklik oldugu gorulmektedir, kacak dokum kaniti bulunmamaktadir."
+      },
+      "model": "gemini-3.5-flash-lite",
+      "viewRelease": 48925,
+      "score": 0.11934235903717579
+    },
+    {
+      "id": "29fc607e-2163-4e8f-b832-0fe0ff7cc744",
+      "lat": 41.229023639486606,
+      "lon": 28.786153793334964,
+      "createdAt": "2026-10-19T20:23:42.027Z",
+      "tile": {
+        "z": 17,
+        "x": 76016,
+        "y": 49031,
+        "fx": 71.875,
+        "fy": 62.5,
+        "beforeUrl": "https://wayback.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/WMTS/1.0.0/default028mm/MapServer/tile/58924/17/49031/76016",
+        "afterUrl": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/17/49031/76016"
+      },
+      "distanceKm": 23.545415622961123,
+      "analyses": [
+        {
+          "beforeRelease": 58924,
+          "beforeDate": "2025-09-25",
+          "result": {
+            "degisim_var": true,
+            "kategori": "kacak_dokum",
+            "guven": 0.95,
+            "gorulen_isaretler": [
+              "moloz yığınları",
+              "kamyon izleri",
+              "düzensiz hafriyat",
+              "yeni toprak dökümü"
+            ],
+            "aciklama": "SONRA görüntüsünde daha önceden olmayan düzensiz moloz ve hafriyat yığınları ile kamyon izleri açıkça görülmektedir. Bu durum havza içinde kaçak döküm yapıldığını göstermektedir."
+          },
+          "model": "gemini-3.5-flash-lite",
+          "createdAt": "2026-10-19T20:23:42.027Z"
+        }
+      ],
+      "truth": true,
+      "beforeRelease": 58924,
+      "beforeDate": "2025-09-25",
+      "result": {
+        "degisim_var": true,
+        "kategori": "kacak_dokum",
+        "guven": 0.95,
+        "gorulen_isaretler": [
+          "moloz yığınları",
+          "kamyon izleri",
+          "düzensiz hafriyat",
+          "yeni toprak dökümü"
+        ],
+        "aciklama": "SONRA görüntüsünde daha önceden olmayan düzensiz moloz ve hafriyat yığınları ile kamyon izleri açıkça görülmektedir. Bu durum havza içinde kaçak döküm yapıldığını göstermektedir."
+      },
+      "model": "gemini-3.5-flash-lite",
+      "viewRelease": 58924,
+      "score": 0.038703765077472065
+    }
+  ]

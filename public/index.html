@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Havza Bekçisi</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💧</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <h1>Havza Bekçisi</h1>
+      <p>Büyükçekmece Gölü havzasında kaçak hafriyat ve moloz dökümünü uydu görüntüleriyle tespit eder.</p>
+    </div>
+    <dl class="stats" aria-label="Test sonuçları">
+      <div class="stat"><dt>Test edilen nokta</dt><dd id="statTested">0</dd></div>
+      <div class="stat stat-caught"><dt>Yakalanan kaçak döküm</dt><dd id="statCaught">–</dd></div>
+      <div class="stat stat-false"><dt>Yanlış alarm</dt><dd id="statFalse">0</dd></div>
+      <div class="stat stat-accuracy"><dt>Doğruluk</dt><dd id="statAccuracy">–</dd></div>
+    </dl>
+  </header>
+
+  <main class="layout">
+    <section class="map-wrap">
+      <div id="map" aria-label="Havza haritası"></div>
+      <p class="map-hint" id="mapHint" role="status">Göl sınırı yükleniyor…</p>
+      <div class="coord-readout" id="coordReadout" aria-hidden="true">
+        <span id="coordLatLon">–</span>
+        <span>Yakınlık <strong id="coordZoom">–</strong></span>
+      </div>
+
+      <div class="legend" aria-label="Harita açıklaması">
+        <p class="legend-title">Öncelik</p>
+        <ul>
+          <li><span class="dot dot-high"></span>Yüksek: suya yakın kaçak döküm şüphesi</li>
+          <li><span class="dot dot-mid"></span>Orta: şüpheli ya da belirsiz</li>
+          <li><span class="dot dot-low"></span>Düşük: döküm dışı değişim</li>
+          <li><span class="swatch-lake"></span>Göl sınırı</li>
+          <li><span class="swatch-selected"></span>Seçili nokta</li>
+        </ul>
+      </div>
+    </section>
+
+    <aside class="panel">
+      <div class="tabs" role="tablist" aria-label="Panel">
+        <button type="button" role="tab" id="tabAnalyze" aria-controls="panelAnalyze" aria-selected="true">Yeni analiz</button>
+        <button type="button" role="tab" id="tabResults" aria-controls="panelResults" aria-selected="false">
+          Sonuçlar <span class="tab-count" id="resultCount">0</span>
+        </button>
+      </div>
+
+      <!-- Yeni analiz -->
+      <section class="tab-panel" id="panelAnalyze" role="tabpanel" aria-labelledby="tabAnalyze">
+        <ol class="steps" id="steps">
+          <li data-step="1"><span class="step-num">1</span><div><strong>Bölge bul</strong><span>Mahalle ara ya da haritada yakınlaş.</span></div></li>
+          <li data-step="2"><span class="step-num">2</span><div><strong>Şüpheli yığına tıkla</strong><span>Açık renkli, düzensiz toprak alanlarına bak.</span></div></li>
+          <li data-step="3"><span class="step-num">3</span><div><strong>Analiz et</strong><span>Gemini eski ve güncel görüntüyü karşılaştırır.</span></div></li>
+        </ol>
+
+        <form class="search" id="searchForm" role="search">
+          <label for="searchInput">Yer ara</label>
+          <div class="search-row">
+            <input id="searchInput" type="search" placeholder="Mahalle veya köy adı, örn. Akçaburgaz" autocomplete="off">
+            <button class="primary" type="submit">Ara</button>
+          </div>
+          <div class="chips">
+            <span>Haberlerde geçen bölgeler:</span>
+            <button type="button" class="chip" data-q="Akçaburgaz">Akçaburgaz</button>
+            <button type="button" class="chip" data-q="Çakmaklı">Çakmaklı</button>
+            <button type="button" class="chip" data-q="Karaağaç">Karaağaç</button>
+            <button type="button" class="chip" data-q="Eskice">Eskice</button>
+          </div>
+          <ul class="search-results" id="searchResults" hidden></ul>
+        </form>
+
+        <div class="controls">
+          <label for="beforeSelect">Karşılaştırılacak eski tarih</label>
+          <select id="beforeSelect"><option>Yükleniyor…</option></select>
+          <p class="help">Varsayılan olarak geçen yılın yaz görüntüsü seçilir. Mevsim farkı yanlış alarma yol açabilir; mümkünse yaz aylarını seç. Görüntü değişmemiş uyarısı alırsan daha eski bir tarih dene.</p>
+        </div>
+
+        <div class="selection" id="selection" hidden>
+          <p class="coords">Seçilen nokta <span id="selCoords"></span></p>
+          <button id="analyzeBtn" class="primary analyze-btn" type="button">
+            <span class="spinner" aria-hidden="true"></span>
+            <span class="analyze-label">Bu noktayı analiz et</span>
+          </button>
+          <div class="progress" aria-hidden="true"><span></span></div>
+          <p class="status" id="status" role="status"></p>
+        </div>
+      </section>
+
+      <!-- Sonuçlar -->
+      <section class="tab-panel" id="panelResults" role="tabpanel" aria-labelledby="tabResults" hidden>
+        <div class="list-head">
+          <p class="list-summary" id="listSummary"></p>
+          <div class="list-actions">
+            <button id="exportBtn" class="ghost" type="button">CSV indir</button>
+            <button id="exportJsonBtn" class="ghost" type="button" title="Sonuçları siteye gömmek için test-results.json olarak indir">Test sonuçlarını dışa aktar</button>
+            <button id="clearBtn" class="ghost" type="button">Tümünü temizle</button>
+          </div>
+        </div>
+        <p class="seed-note" id="seedNote" hidden>Bu sonuçlar, geliştiricinin havzada yaptığı gerçek test analizleridir. Yeni bir nokta analiz edersen tarayıcında saklanır.</p>
+        <div class="filters" id="filters" role="group" aria-label="Sonuçları filtrele"></div>
+        <ol class="cards" id="cards"></ol>
+        <p class="filter-empty" id="filterEmpty" hidden>Bu filtreye uyan nokta yok.</p>
+        <div class="empty" id="empty">
+          <p>Henüz analiz edilmiş nokta yok.</p>
+          <button type="button" class="primary" id="emptyStart">Yeni analize başla</button>
+        </div>
+      </section>
+    </aside>
+  </main>
+
+  <footer class="credits">
+    Görüntüler: Esri World Imagery ve World Imagery Wayback. Göl sınırı ve yer arama: © OpenStreetMap katkıcıları (Overpass, Nominatim). Analiz: Google Gemini. Bu bir prototiptir; sonuçlar sahada doğrulanmalıdır.
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@turf/turf@7.1.0/turf.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

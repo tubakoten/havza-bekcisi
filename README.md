@@ -2,8 +2,8 @@
 
 **İstanbul'un içme suyu havzalarındaki kaçak hafriyat ve moloz dökümünü uydu görüntüleri ve yapay zekâ ile erken tespit eden bir prototip.**
 
-🔗 **Canlı demo:** [buraya Netlify linki eklenecek]
-🎥 **Tanıtım videosu:** [buraya video linki eklenecek]
+🔗 **Canlı demo: https://havza-bekcisi.netlify.app
+
 
 UP School Climathon 2026 kapsamında geliştirildi.
 

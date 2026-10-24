@@ -16,6 +16,7 @@
     <div class="brand">
       <h1>Havza Bekçisi</h1>
       <p>Büyükçekmece Gölü havzasında kaçak hafriyat ve moloz dökümünü uydu görüntüleriyle tespit eder.</p>
+      <button type="button" class="link-btn" id="introOpen">Nasıl çalışır?</button>
     </div>
     <dl class="stats" aria-label="Test sonuçları">
       <div class="stat"><dt>Test edilen nokta</dt><dd id="statTested">0</dd></div>
@@ -42,6 +43,7 @@
           <li><span class="dot dot-low"></span>Düşük: döküm dışı değişim</li>
           <li><span class="swatch-lake"></span>Göl sınırı</li>
           <li><span class="swatch-selected"></span>Seçili nokta</li>
+          <li><span class="swatch-scan"></span>Tarama karesi</li>
         </ul>
       </div>
     </section>
@@ -84,6 +86,19 @@
           <p class="help">Varsayılan olarak geçen yılın yaz görüntüsü seçilir. Mevsim farkı yanlış alarma yol açabilir; mümkünse yaz aylarını seç. Görüntü değişmemiş uyarısı alırsan daha eski bir tarih dene.</p>
         </div>
 
+        <div class="scan" id="scanBox">
+          <div class="scan-head">
+            <strong>Otomatik bölge taraması</strong>
+            <span class="scan-badge">Yeni</span>
+          </div>
+          <p class="help">Haritanın ortasındaki yaklaşık 700 × 700 metrelik alanı 9 kareye bölüp her kareyi Gemini ile analiz eder. Şüpheli ve belirsiz kareler Sonuçlar'a eklenir.</p>
+          <div class="scan-actions">
+            <button id="scanBtn" class="primary" type="button">Bu bölgeyi tara</button>
+            <button id="scanClearBtn" class="ghost" type="button" hidden>Taramayı temizle</button>
+          </div>
+          <p class="status" id="scanStatus" role="status"></p>
+        </div>
+
         <div class="selection" id="selection" hidden>
           <p class="coords">Seçilen nokta <span id="selCoords"></span></p>
           <button id="analyzeBtn" class="primary analyze-btn" type="button">
@@ -116,6 +131,43 @@
       </section>
     </aside>
   </main>
+
+  <!-- Açılış ekranı -->
+  <div class="intro" id="intro" role="dialog" aria-modal="true" aria-labelledby="introTitle" hidden>
+    <div class="intro-card">
+      <p class="intro-eyebrow">UP School Climathon 2026 prototipi</p>
+      <h2 id="introTitle">İstanbul'un içme suyu havzalarına kaçak hafriyat dökülüyor.</h2>
+      <p class="intro-lead">İSTAÇ ekipleri yalnızca iki haftada 7 baraj havzasından <strong>40 ton atık</strong> topladı. Döküm çoğu zaman ancak biri fark edip ihbar ettiğinde, haftalar sonra görünür oluyor.</p>
+
+      <ol class="intro-steps">
+        <li><span>1</span><div><strong>Uydu görüntülerini getirir</strong>Aynı yerin eski ve güncel hâli.</div></li>
+        <li><span>2</span><div><strong>Gemini değişimi sınıflandırır</strong>Kaçak döküm mü, tarım mı, inşaat mı?</div></li>
+        <li><span>3</span><div><strong>Önceliklendirir, rapor hazırlar</strong>Suya yakınlığa göre sıralar, tek tıkla ihbar raporu.</div></li>
+      </ol>
+
+      <div class="intro-compare">
+        <div><span>Bugün</span><strong>İhbar beklenir, döküm haftalar sonra fark edilir</strong></div>
+        <div class="intro-arrow" aria-hidden="true">→</div>
+        <div class="is-goal"><span>Hedef</span><strong>Otomatik tarama, döküm günler içinde görünür</strong></div>
+      </div>
+
+      <div class="intro-actions">
+        <button type="button" class="primary" id="tourStart">Rehberli demoyu başlat</button>
+        <button type="button" class="ghost" id="introClose">Kendim keşfedeyim</button>
+      </div>
+      <p class="intro-note">Bu bir prototiptir; sonuçlar sahada doğrulanmalıdır.</p>
+    </div>
+  </div>
+
+  <!-- Rehberli demo -->
+  <div class="tour" id="tour" role="status" aria-live="polite" hidden>
+    <p class="tour-step" id="tourCount"></p>
+    <p class="tour-text" id="tourText"></p>
+    <div class="tour-actions">
+      <button type="button" class="ghost" id="tourEnd">Turu bitir</button>
+      <button type="button" class="primary" id="tourNext">Sonraki</button>
+    </div>
+  </div>
 
   <footer class="credits">
     Görüntüler: Esri World Imagery ve World Imagery Wayback. Göl sınırı ve yer arama: © OpenStreetMap katkıcıları (Overpass, Nominatim). Analiz: Google Gemini. Bu bir prototiptir; sonuçlar sahada doğrulanmalıdır.

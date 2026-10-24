@@ -202,6 +202,8 @@ map.on("mousemove", (e) => {
 });
 map.on("zoomend", updateZoomReadout);
 
+map.on("zoomend", () => updateScanButton());
+
 map.on("zoomend", () => {
   if (!placeFound && map.getZoom() >= 15) {
     placeFound = true;
@@ -263,6 +265,15 @@ async function loadLake() {
       data = JSON.parse(localStorage.getItem(LAKE_CACHE_KEY));
     } catch {
       data = null;
+    }
+    // Önce siteyle birlikte gelen dosyayı dene (Overpass sunucuları zaman zaman yanıt vermiyor)
+    if (!data?.elements?.length) {
+      try {
+        const res = await fetch("lake.json");
+        if (res.ok) data = await res.json();
+      } catch {
+        data = null;
+      }
     }
     if (!data?.elements?.length) {
       data = await fetchOverpass();
@@ -495,6 +506,30 @@ async function requestAnalysis(lat, lon, releaseNum, onRetry = () => {}) {
   throw new Error("Analiz yapılamadı.");
 }
 
+// Sunucu yanıtından yeni bir nokta kaydı oluşturur. source: "manuel" | "tarama"
+function createPoint(lat, lon, releaseNum, data, source) {
+  const analysis = {
+    beforeRelease: releaseNum,
+    beforeDate: dateOfRelease(releaseNum),
+    result: data.result,
+    model: data.model,
+    createdAt: new Date().toISOString(),
+  };
+  const point = {
+    id: crypto.randomUUID(),
+    lat,
+    lon,
+    createdAt: analysis.createdAt,
+    tile: data.tile,
+    distanceKm: distanceToLakeKm(lat, lon),
+    analyses: [analysis],
+    truth: null, // true: gerçekte kaçak döküm, false: değil
+    source,
+  };
+  setActiveAnalysis(point, analysis);
+  return point;
+}
+
 async function analyze() {
   if (!pending) return;
   const button = $("#analyzeBtn");
@@ -510,26 +545,7 @@ async function analyze() {
 
   try {
     const data = await requestAnalysis(lat, lon, releaseNum, (msg) => setStatus(msg));
-
-    const distanceKm = distanceToLakeKm(lat, lon);
-    const analysis = {
-      beforeRelease: releaseNum,
-      beforeDate: dateOfRelease(releaseNum),
-      result: data.result,
-      model: data.model,
-      createdAt: new Date().toISOString(),
-    };
-    const point = {
-      id: crypto.randomUUID(),
-      lat,
-      lon,
-      createdAt: analysis.createdAt,
-      tile: data.tile,
-      distanceKm,
-      analyses: [analysis],
-      truth: null, // true: gerçekte kaçak döküm, false: değil
-    };
-    setActiveAnalysis(point, analysis);
+    const point = createPoint(lat, lon, releaseNum, data, "manuel");
     points.push(point);
     savePoints();
 
@@ -553,6 +569,332 @@ async function analyze() {
     box.classList.remove("is-loading");
     label.textContent = "Bu noktayı analiz et";
   }
+}
+
+/* ---------- Otomatik bölge taraması ---------- */
+
+const SCAN_ZOOM = 17; // analiz karesiyle aynı seviye: her kare ~230 m
+const SCAN_MIN_MAP_ZOOM = 15;
+const SCAN_CONCURRENCY = 2; // Gemini kotasını zorlamamak için aynı anda en fazla 2 istek
+let scanLayer = null;
+let scanning = false;
+let scanStop = false;
+
+function setScanStatus(text, isError = false) {
+  const node = $("#scanStatus");
+  node.textContent = text;
+  node.classList.toggle("is-error", isError);
+}
+
+function updateScanButton() {
+  const button = $("#scanBtn");
+  $("#scanBox").classList.toggle("is-scanning", scanning);
+  if (scanning) {
+    button.textContent = "Taramayı durdur";
+    button.disabled = false;
+    return;
+  }
+  button.textContent = "Bu bölgeyi tara";
+  const zoomedIn = map.getZoom() >= SCAN_MIN_MAP_ZOOM;
+  button.disabled = !zoomedIn;
+  if (!zoomedIn && !$("#scanStatus").textContent) {
+    setScanStatus(`Taramak için haritada yakınlaş (en az ${SCAN_MIN_MAP_ZOOM}. seviye).`);
+  } else if (zoomedIn && $("#scanStatus").textContent.startsWith("Taramak için")) {
+    setScanStatus("");
+  }
+}
+
+function tileInfo(x, y, z) {
+  const n = 2 ** z;
+  const lonOf = (tx) => (tx / n) * 360 - 180;
+  const latOf = (ty) => (Math.atan(Math.sinh(Math.PI * (1 - (2 * ty) / n))) * 180) / Math.PI;
+  return {
+    west: lonOf(x),
+    east: lonOf(x + 1),
+    north: latOf(y),
+    south: latOf(y + 1),
+    centerLat: latOf(y + 0.5),
+    centerLon: lonOf(x + 0.5),
+  };
+}
+
+// Verilen noktanın bulunduğu kare ve çevresindeki 8 kare (3 × 3)
+function scanTilesAround(lat, lon) {
+  const n = 2 ** SCAN_ZOOM;
+  const latRad = (lat * Math.PI) / 180;
+  const cx = Math.floor(((lon + 180) / 360) * n);
+  const cy = Math.floor(((1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) / 2) * n);
+  const tiles = [];
+  for (let dy = -1; dy <= 1; dy++) {
+    for (let dx = -1; dx <= 1; dx++) tiles.push(tileInfo(cx + dx, cy + dy, SCAN_ZOOM));
+  }
+  return tiles;
+}
+
+const SCAN_STYLES = {
+  pending: { color: "#ffffff", weight: 1, dashArray: "4 4", fillColor: "#ffffff", fillOpacity: 0.05 },
+  running: { color: "#7fd0e6", weight: 3, dashArray: null, fillColor: "#7fd0e6", fillOpacity: 0.3 },
+  failed: { color: "#a9561c", weight: 2, dashArray: "2 4", fillOpacity: 0 },
+};
+
+function scanStyleFor(result) {
+  if (result.ayni_goruntu) return { color: "#ffffff", weight: 1, dashArray: null, fillColor: "#9aa5a8", fillOpacity: 0.35 };
+  if (result.kategori === "kacak_dokum") {
+    return { color: LEVELS.yuksek.color, weight: 3, dashArray: null, fillColor: LEVELS.yuksek.color, fillOpacity: 0.4 };
+  }
+  if (result.kategori === "belirsiz") {
+    return { color: LEVELS.orta.color, weight: 2, dashArray: null, fillColor: LEVELS.orta.color, fillOpacity: 0.3 };
+  }
+  return { color: LEVELS.dusuk.color, weight: 1, dashArray: null, fillColor: LEVELS.dusuk.color, fillOpacity: 0.15 };
+}
+
+function clearScan() {
+  if (scanLayer) map.removeLayer(scanLayer);
+  scanLayer = null;
+  $("#scanClearBtn").hidden = true;
+  setScanStatus("");
+  updateScanButton();
+}
+
+async function scanArea() {
+  if (scanning) {
+    scanStop = true;
+    setScanStatus("Durduruluyor, devam eden analizler bitince tarama duracak…");
+    return;
+  }
+  if (map.getZoom() < SCAN_MIN_MAP_ZOOM) {
+    setScanStatus(`Taramak için haritada yakınlaş (en az ${SCAN_MIN_MAP_ZOOM}. seviye).`, true);
+    return;
+  }
+
+  const releaseNum = Number($("#beforeSelect").value);
+  const center = map.getCenter();
+  const tiles = scanTilesAround(center.lat, center.lng);
+
+  if (scanLayer) map.removeLayer(scanLayer);
+  scanLayer = L.layerGroup().addTo(map);
+  const rects = tiles.map((t) =>
+    L.rectangle([[t.south, t.west], [t.north, t.east]], SCAN_STYLES.pending).addTo(scanLayer)
+  );
+  map.fitBounds(
+    [[tiles[8].south, tiles[0].west], [tiles[0].north, tiles[8].east]],
+    { padding: [30, 30] }
+  );
+
+  scanning = true;
+  scanStop = false;
+  $("#scanClearBtn").hidden = true;
+  updateScanButton();
+  setScanStatus(`0/${tiles.length} kare tarandı…`);
+
+  const counts = { suspect: 0, unclear: 0, clean: 0, same: 0, failed: 0 };
+  let done = 0;
+  let next = 0;
+  let firstSaved = null;
+
+  async function worker() {
+    while (next < tiles.length && !scanStop) {
+      const i = next++;
+      const t = tiles[i];
+      rects[i].setStyle(SCAN_STYLES.running);
+      try {
+        const data = await requestAnalysis(t.centerLat, t.centerLon, releaseNum, (msg) => setScanStatus(msg));
+        const r = data.result;
+        rects[i].setStyle(scanStyleFor(r));
+        rects[i].bindTooltip(
+          r.ayni_goruntu
+            ? "Görüntü değişmemiş"
+            : `${CATEGORY_LABELS[r.kategori] ?? r.kategori} (%${Math.round(r.guven * 100)})`
+        );
+
+        if (r.ayni_goruntu) counts.same++;
+        else if (r.kategori === "kacak_dokum") counts.suspect++;
+        else if (r.kategori === "belirsiz") counts.unclear++;
+        else counts.clean++;
+
+        // Sadece incelenmesi gereken kareler sonuç listesine eklenir
+        if (!r.ayni_goruntu && (r.kategori === "kacak_dokum" || r.kategori === "belirsiz")) {
+          const point = createPoint(t.centerLat, t.centerLon, releaseNum, data, "tarama");
+          points.push(point);
+          savePoints();
+          if (!firstSaved || r.kategori === "kacak_dokum") firstSaved = point;
+          rects[i].on("click", (e) => {
+            L.DomEvent.stopPropagation(e);
+            openId = point.id;
+            setTab("results");
+            render();
+            document.querySelector(`[data-id="${point.id}"]`)?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+          });
+          render();
+        }
+      } catch (err) {
+        counts.failed++;
+        rects[i].setStyle(SCAN_STYLES.failed);
+        rects[i].bindTooltip(`Analiz yapılamadı: ${err.message}`);
+      }
+      done++;
+      if (!scanStop) setScanStatus(`${done}/${tiles.length} kare tarandı…`);
+    }
+  }
+
+  await Promise.all(Array.from({ length: SCAN_CONCURRENCY }, worker));
+
+  // Taranmadan kalan kareleri sil (durdurulduysa)
+  rects.forEach((rect, i) => {
+    if (i >= next) scanLayer.removeLayer(rect);
+  });
+
+  scanning = false;
+  $("#scanClearBtn").hidden = false;
+  updateScanButton();
+
+  const parts = [];
+  if (counts.suspect) parts.push(`${counts.suspect} kaçak döküm şüphesi`);
+  if (counts.unclear) parts.push(`${counts.unclear} belirsiz`);
+  if (counts.clean) parts.push(`${counts.clean} temiz`);
+  if (counts.same) parts.push(`${counts.same} karede görüntü değişmemiş`);
+  if (counts.failed) parts.push(`${counts.failed} kare analiz edilemedi`);
+  const head = scanStop ? `Tarama durduruldu (${done}/${tiles.length} kare)` : "Tarama tamamlandı";
+  const tail = counts.suspect + counts.unclear
+    ? " Şüpheli ve belirsiz kareler Sonuçlar'a eklendi; haritada kareye tıklayarak açabilirsin."
+    : "";
+  setScanStatus(`${head}: ${parts.join(", ") || "sonuç yok"}.${tail}`);
+  if (firstSaved) openId = firstSaved.id;
+  render();
+}
+
+/* ---------- İhbar raporu ---------- */
+
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+}
+
+// Yazdırılabilir / PDF olarak kaydedilebilir bir tespit raporu açar.
+// Raporu ilgili kuruma gönderen kullanıcıdır; uygulama hiçbir yere otomatik gönderim yapmaz.
+function openReport(p) {
+  const win = window.open("", "_blank");
+  if (!win) {
+    alert("Rapor penceresi açılamadı. Tarayıcının açılır pencere engelini kapatıp tekrar dene.");
+    return;
+  }
+  const now = new Date();
+  const reportNo = `HB-${now.getFullYear()}-${p.id.slice(0, 6).toUpperCase()}`;
+  const band = protectionBand(p.distanceKm);
+  const level = LEVELS[levelOf(p.score)].label;
+  const lat = p.lat.toFixed(6);
+  const lon = p.lon.toFixed(6);
+  const mapsUrl = `https://www.google.com/maps?q=${lat},${lon}`;
+  const truthText =
+    p.truth === true
+      ? "Uydu görüntüleri üzerinde görsel olarak doğrulandı: kaçak döküm."
+      : p.truth === false
+        ? "Görsel değerlendirmede döküm olmadığı sonucuna varıldı."
+        : "Henüz bir kişi tarafından görsel olarak doğrulanmadı.";
+  const signs = p.result.gorulen_isaretler.map((s) => `<li>${escapeHtml(s)}</li>`).join("");
+  const pin = `left:${p.tile.fx}%;top:${p.tile.fy}%`;
+
+  const html = `<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>${reportNo} Kaçak Döküm Tespit Raporu</title>
+<style>
+  @page { size: A4; margin: 16mm; }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 24px; font-family: "Helvetica Neue", Arial, sans-serif; color: #16252b; font-size: 13px; line-height: 1.45; }
+  .toolbar { display: flex; gap: 8px; margin-bottom: 20px; }
+  .toolbar button { padding: 10px 14px; border: 0; border-radius: 6px; background: #0f5568; color: #fff; font: inherit; font-weight: 600; cursor: pointer; }
+  .toolbar p { margin: 0; align-self: center; color: #55666b; }
+  header { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; padding-bottom: 12px; border-bottom: 3px solid #0f5568; }
+  h1 { margin: 0; font-size: 22px; color: #0f5568; }
+  .meta { text-align: right; color: #55666b; font-size: 12px; }
+  h2 { margin: 18px 0 8px; font-size: 14px; text-transform: uppercase; letter-spacing: .04em; color: #0f5568; }
+  table { width: 100%; border-collapse: collapse; }
+  td { padding: 6px 8px; border-bottom: 1px solid #cbd5d3; vertical-align: top; }
+  td:first-child { width: 34%; color: #55666b; }
+  .images { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  figure { margin: 0; }
+  .img { position: relative; aspect-ratio: 1; overflow: hidden; border: 1px solid #cbd5d3; border-radius: 4px; }
+  .img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .pin { position: absolute; width: 18px; height: 18px; margin: -9px 0 0 -9px; border: 2px solid #fff; border-radius: 50%; box-shadow: 0 0 0 2px #16252b; }
+  figcaption { margin-top: 4px; font-size: 12px; color: #55666b; }
+  .verdict { padding: 10px 12px; border-left: 3px solid #a9561c; background: #f6e6da; }
+  .verdict p { margin: 0 0 6px; }
+  ul { margin: 6px 0 0; padding-left: 18px; }
+  .note { margin-top: 18px; padding: 10px 12px; border: 1px solid #cbd5d3; border-radius: 4px; color: #55666b; font-size: 11.5px; }
+  a { color: #0f5568; }
+  @media print { .toolbar { display: none; } body { padding: 0; } }
+</style>
+</head>
+<body>
+  <div class="toolbar">
+    <button onclick="window.print()">Yazdır / PDF olarak kaydet</button>
+    <p>Yazdır penceresinde hedef olarak "PDF olarak kaydet" seçebilirsin.</p>
+  </div>
+
+  <header>
+    <div>
+      <h1>Kaçak Döküm Şüphesi Tespit Raporu</h1>
+      <div>Havza Bekçisi, Büyükçekmece Gölü havzası pilot uygulaması</div>
+    </div>
+    <div class="meta">
+      Rapor no: <strong>${reportNo}</strong><br>
+      Oluşturma: ${escapeHtml(now.toLocaleString("tr-TR"))}
+    </div>
+  </header>
+
+  <h2>Tespit özeti</h2>
+  <table>
+    <tr><td>Sınıflandırma</td><td><strong>${escapeHtml(CATEGORY_LABELS[p.result.kategori] ?? p.result.kategori)}</strong></td></tr>
+    <tr><td>Yapay zekâ güveni</td><td>%${Math.round(p.result.guven * 100)}</td></tr>
+    <tr><td>Öncelik</td><td>${escapeHtml(level)}</td></tr>
+    <tr><td>İnsan doğrulaması</td><td>${escapeHtml(truthText)}</td></tr>
+  </table>
+
+  <h2>Konum</h2>
+  <table>
+    <tr><td>Koordinat</td><td>${lat}, ${lon}</td></tr>
+    <tr><td>Harita bağlantısı</td><td><a href="${mapsUrl}">${mapsUrl}</a></td></tr>
+    <tr><td>Büyükçekmece Gölü'ne mesafe</td><td>${escapeHtml(formatDistance(p.distanceKm))}</td></tr>
+    <tr><td>İSKİ koruma bandı (yaklaşık)</td><td>${escapeHtml(band.label)}</td></tr>
+  </table>
+
+  <h2>Uydu görüntüleri</h2>
+  <div class="images">
+    <figure>
+      <div class="img"><img src="${waybackTileUrl(p.beforeRelease, p.tile)}" alt="Önce"><span class="pin" style="${pin}"></span></div>
+      <figcaption>Önce: ${escapeHtml(formatDate(p.beforeDate))} sürümü (Esri World Imagery Wayback)</figcaption>
+    </figure>
+    <figure>
+      <div class="img"><img src="${p.tile.afterUrl}" alt="Sonra"><span class="pin" style="${pin}"></span></div>
+      <figcaption>Sonra: güncel görüntü (Esri World Imagery)</figcaption>
+    </figure>
+  </div>
+
+  <h2>Yapay zekâ değerlendirmesi</h2>
+  <div class="verdict">
+    <p>${escapeHtml(p.result.aciklama)}</p>
+    ${signs ? `<strong>Görülen işaretler:</strong><ul>${signs}</ul>` : ""}
+  </div>
+
+  <h2>Önerilen başvuru kanalları</h2>
+  <table>
+    <tr><td>İSKİ</td><td>İçme suyu havzasındaki ihlaller için</td></tr>
+    <tr><td>İBB Çözüm Merkezi (ALO 153)</td><td>Kaçak hafriyat ve moloz dökümü bildirimi için</td></tr>
+    <tr><td>CİMER</td><td>cimer.gov.tr üzerinden resmî başvuru için</td></tr>
+  </table>
+
+  <div class="note">
+    Bu rapor, uydu görüntüleri ve yapay zekâ (Google Gemini) ile üretilmiş bir <strong>ön tespittir</strong>; kesin değerlendirme için saha incelemesi gerekir.
+    Görüntü tarihleri Esri Wayback yayın tarihleridir, çekim tarihi daha önce olabilir. Uydudan bakıldığında yasal döküm sahaları ile kaçak döküm ayırt edilemeyebilir.
+    Görüntüler: © Esri, Maxar, Earthstar Geographics ve GIS kullanıcı topluluğu. Göl sınırı: © OpenStreetMap katkıcıları.
+  </div>
+</body>
+</html>`;
+
+  win.document.open();
+  win.document.write(html);
+  win.document.close();
 }
 
 /* ---------- Test istatistikleri ---------- */
@@ -781,6 +1123,7 @@ function buildCard(p) {
   const sameImage = Boolean(p.result.ayni_goruntu);
   const pills = [el("span", { class: "pill pill-level", text: LEVELS[level].label })];
   if (sameImage) pills.push(el("span", { class: "pill pill-same", text: "Görüntü değişmemiş" }));
+  if (p.source === "tarama") pills.push(el("span", { class: "pill pill-scan", text: "Otomatik tarama" }));
   if (p.truth !== null && p.truth !== undefined) {
     const predicted = p.result.kategori === "kacak_dokum";
     const correct = predicted === p.truth;
@@ -801,7 +1144,10 @@ function buildCard(p) {
       onclick: () => {
         openId = isOpen ? null : p.id;
         render();
-        if (!isOpen) map.panTo([p.lat, p.lon]);
+        if (!isOpen) {
+          map.panTo([p.lat, p.lon]);
+          setTimeout(() => animateCompare(document.querySelector(`[data-id="${p.id}"]`)), 300);
+        }
       },
     },
     [
@@ -823,7 +1169,19 @@ function buildCard(p) {
 
   if (isOpen) {
     const body = el("div", { class: "card-body" });
-    body.append(buildFacts(p), ...buildCompare(p), buildVerdict(p), buildTruth(p), buildHistory(p));
+    body.append(buildFacts(p), ...buildCompare(p), buildVerdict(p));
+    const reportable = !p.result.ayni_goruntu && ["kacak_dokum", "belirsiz"].includes(p.result.kategori);
+    if (reportable) {
+      body.append(
+        el("button", {
+          type: "button",
+          class: "primary report-btn",
+          text: "İhbar raporu oluştur",
+          onclick: () => openReport(p),
+        })
+      );
+    }
+    body.append(buildTruth(p), buildHistory(p));
     body.append(
       el("div", { class: "card-foot" }, [
         el("span", { text: `${p.lat.toFixed(5)}, ${p.lon.toFixed(5)}` }),
@@ -999,7 +1357,167 @@ async function seedFromFile() {
   }
 }
 
+/* ---------- Kaydırıcı animasyonu ---------- */
+
+// Kart açılınca kaydırıcıyı bir kez sağa sola götürüp önce/sonra farkını gösterir
+function animateCompare(card) {
+  const wrap = card?.querySelector(".compare");
+  const range = card?.querySelector(".compare-range");
+  if (!wrap || !range) return;
+  if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+  const keys = [50, 15, 85, 50];
+  const segment = 700; // ms
+  const start = performance.now();
+  const step = (now) => {
+    const t = (now - start) / segment;
+    const i = Math.min(Math.floor(t), keys.length - 2);
+    const local = Math.min(t - i, 1);
+    const eased = local < 0.5 ? 2 * local * local : 1 - (-2 * local + 2) ** 2 / 2;
+    const value = keys[i] + (keys[i + 1] - keys[i]) * eased;
+    range.value = String(value);
+    wrap.style.setProperty("--pos", `${value}%`);
+    if (t < keys.length - 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+
+/* ---------- Açılış ekranı ---------- */
+
+const INTRO_KEY = "havza-bekcisi:intro-seen:v1";
+
+function showIntro() {
+  $("#intro").hidden = false;
+  $("#tourStart").focus();
+}
+
+function closeIntro() {
+  $("#intro").hidden = true;
+  try {
+    localStorage.setItem(INTRO_KEY, "1");
+  } catch {
+    // tarayıcı kaydı engelliyorsa ekran bir sonraki ziyarette tekrar görünür
+  }
+}
+
+/* ---------- Rehberli demo ---------- */
+// Gemini'ye istek göndermez; gömülü test sonuçlarındaki tespit edilmiş örneği kullanır.
+
+let tourSteps = [];
+let tourIndex = -1;
+let tourFocusEl = null;
+
+function demoPoint() {
+  const confirmed = points.find((p) => p.result.kategori === "kacak_dokum" && p.truth === true);
+  if (confirmed) return confirmed;
+  return [...points]
+    .filter((p) => p.result.kategori === "kacak_dokum")
+    .sort((a, b) => b.result.guven - a.result.guven)[0] ?? null;
+}
+
+const cardOf = (id) => document.querySelector(`[data-id="${id}"]`);
+
+function setTourFocus(node) {
+  tourFocusEl?.classList.remove("tour-focus");
+  tourFocusEl = node ?? null;
+  if (tourFocusEl) {
+    tourFocusEl.classList.add("tour-focus");
+    tourFocusEl.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+}
+
+function buildTourSteps() {
+  const scanStep = {
+    text: "Elle nokta seçmek yerine bir bölgeyi otomatik de taratabilirsin: haritada yakınlaş ve “Bu bölgeyi tara”ya bas. Tur bitti, şimdi sıra sende!",
+    run: () => {
+      setTab("analyze");
+      setTourFocus($("#scanBox"));
+    },
+  };
+  const p = demoPoint();
+  if (!p) return [scanStep];
+
+  return [
+    {
+      text: "Önce hafriyatın görünür olduğu bir döküm alanına gidiyoruz. Bu nokta, ön testte sistemin tespit ettiği gerçek bir örnek.",
+      run: () => {
+        setTourFocus(null);
+        map.flyTo([p.lat, p.lon], 16, { duration: 1.5 });
+      },
+    },
+    {
+      text: "Sistem bu noktanın eski ve güncel uydu görüntüsünü getirdi; Gemini ikisini karşılaştırıp kaçak döküm şüphesi olarak sınıflandırdı.",
+      run: () => {
+        openId = p.id;
+        resultFilter = "all";
+        setTab("results");
+        render();
+        setTourFocus(cardOf(p.id)?.querySelector(".card-head"));
+      },
+    },
+    {
+      text: "Kaydırıcıyla aynı yerin önceki ve bugünkü hâlini karşılaştırabilirsin. Gemini'nin gördüğünü sen de kendi gözünle doğrularsın.",
+      run: () => {
+        const card = cardOf(p.id);
+        setTourFocus(card?.querySelector(".compare"));
+        animateCompare(card);
+      },
+    },
+    {
+      text: "Gemini kararının gerekçesini yazıyor. Üstteki kutular da göle mesafeyi ve İSKİ koruma bandını gösteriyor.",
+      run: () => setTourFocus(cardOf(p.id)?.querySelector(".verdict")),
+    },
+    {
+      text: "Tespit edilen nokta için tek tıkla ihbar raporu oluşturulabiliyor: koordinat, görüntüler ve gerekçe İSKİ'ye, ALO 153'e ya da CİMER'e gönderilmeye hazır.",
+      run: () => setTourFocus(cardOf(p.id)?.querySelector(".report-btn")),
+    },
+    scanStep,
+  ];
+}
+
+function runTourStep() {
+  const step = tourSteps[tourIndex];
+  $("#tourCount").textContent = `Adım ${tourIndex + 1}/${tourSteps.length}`;
+  $("#tourText").textContent = step.text;
+  $("#tourNext").textContent = tourIndex === tourSteps.length - 1 ? "Bitir" : "Sonraki";
+  step.run();
+}
+
+function startTour() {
+  closeIntro();
+  tourSteps = buildTourSteps();
+  tourIndex = 0;
+  $("#tour").hidden = false;
+  runTourStep();
+  $("#tourNext").focus();
+}
+
+function endTour() {
+  $("#tour").hidden = true;
+  setTourFocus(null);
+  tourIndex = -1;
+}
+
+function nextTourStep() {
+  if (tourIndex >= tourSteps.length - 1) {
+    endTour();
+    return;
+  }
+  tourIndex++;
+  runTourStep();
+}
+
 /* ---------- Olaylar ve başlatma ---------- */
+
+$("#introOpen").addEventListener("click", showIntro);
+$("#introClose").addEventListener("click", closeIntro);
+$("#tourStart").addEventListener("click", startTour);
+$("#tourNext").addEventListener("click", nextTourStep);
+$("#tourEnd").addEventListener("click", endTour);
+document.addEventListener("keydown", (e) => {
+  if (e.key !== "Escape") return;
+  if (!$("#intro").hidden) closeIntro();
+  else if (!$("#tour").hidden) endTour();
+});
 
 $("#tabAnalyze").addEventListener("click", () => setTab("analyze"));
 $("#tabResults").addEventListener("click", () => setTab("results"));
@@ -1018,6 +1536,8 @@ for (const chip of document.querySelectorAll(".chip")) {
 }
 
 $("#analyzeBtn").addEventListener("click", analyze);
+$("#scanBtn").addEventListener("click", scanArea);
+$("#scanClearBtn").addEventListener("click", clearScan);
 $("#exportBtn").addEventListener("click", exportCsv);
 $("#exportJsonBtn").addEventListener("click", exportJson);
 $("#clearBtn").addEventListener("click", () => {
@@ -1034,9 +1554,17 @@ $("#clearBtn").addEventListener("click", () => {
 // Kayıtlı sonuç varsa Sonuçlar sekmesiyle aç
 setTab(points.length ? "results" : "analyze");
 updateZoomReadout();
+updateScanButton();
 render();
 (async () => {
   await seedFromFile();
+  let introSeen = false;
+  try {
+    introSeen = localStorage.getItem(INTRO_KEY) === "1";
+  } catch {
+    introSeen = false;
+  }
+  if (!introSeen) showIntro();
   loadReleases();
   loadLake();
 })();
